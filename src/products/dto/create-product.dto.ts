@@ -20,6 +20,9 @@ export class CreateProductDto {
   @ApiProperty({ description: 'Product discount' })
   discount?: number;
 
+  @ApiProperty({ description: 'Product rating' })
+  rating?: number;
+
   // Поля специфічні для категорії
 
   @ApiProperty({ description: 'CPU model', required: false })

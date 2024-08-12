@@ -23,7 +23,7 @@ import { PasswordService } from './services/password.service';
         };
       },
     }),
-        UsersModule,
+    UsersModule,
     PassportModule,
   ],
   controllers: [AuthController],

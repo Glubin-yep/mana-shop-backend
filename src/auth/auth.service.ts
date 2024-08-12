@@ -18,7 +18,6 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private passwordService: PasswordService,
- 
   ) {}
 
   async validateToken(token: string): Promise<any> {
@@ -58,7 +57,7 @@ export class AuthService {
   }
 
   async login(user: UserEntity, req: Request) {
-        return {
+    return {
       token: this.jwtService.sign({ id: user.id }),
       ...new UserResponseDto(user),
     };
@@ -88,7 +87,6 @@ export class AuthService {
   //     };
   //   }
 
-   
   //   return {
   //     token: this.jwtService.sign({ id: existingUser.id }),
   //     ...new UserResponseDto(gitUser),

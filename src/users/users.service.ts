@@ -10,7 +10,6 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    
   ) {}
 
   async findByEmail(email: string) {

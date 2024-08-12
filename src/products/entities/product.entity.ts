@@ -38,6 +38,9 @@ export class ProductEntity {
   @Column({ nullable: true })
   photoURL: string;
 
+  @Column({ type: 'float', nullable: true })
+  rating: number;
+
   @OneToOne(() => LaptopDetailsEntity, (details) => details.product, {
     cascade: true,
     onDelete: 'CASCADE',

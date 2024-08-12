@@ -18,5 +18,5 @@ export class UserEntity {
   firstName: string;
 
   @Column({ nullable: true })
-  lastName: string;  
+  lastName: string;
 }
