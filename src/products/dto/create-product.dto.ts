@@ -46,7 +46,7 @@ export class CreateProductDto {
   // Для смартфонів:
 
   @ApiProperty({ description: 'Functionality', required: false })
-  functionality?: string;
+  camera?: string;
 
   @ApiProperty({ description: 'Battery capacity in mAh', required: false })
   batteryCapacity?: number;

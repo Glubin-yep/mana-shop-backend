@@ -6,11 +6,13 @@ import {
   Param,
   Put,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Category } from '@/enums/category';
 
 @Controller('products')
 export class ProductsController {
@@ -23,14 +25,18 @@ export class ProductsController {
     return this.productsService.createProduct(createProductDto);
   }
 
-  @Get()
-  async findAll(): Promise<ProductEntity[]> {
-    return this.productsService.findAll();
+  @Get('category/:category')
+  async findAllinCategory(
+    @Param('category') category: Category,
+  ): Promise<ProductEntity[]> {
+    return this.productsService.findAllinCategory(category);
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: number): Promise<ProductEntity> {
-    return this.productsService.findOne(id);
+  @Get('mainpage/:amount')
+  async findItemsForMainPage(
+    @Param('amount', ParseIntPipe) amount: number,
+  ): Promise<ProductEntity[]> {
+    return this.productsService.findItemsForMainPage(amount);
   }
 
   @Put(':id')

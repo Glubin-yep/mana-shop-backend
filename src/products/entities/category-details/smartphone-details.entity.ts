@@ -7,7 +7,7 @@ export class SmartphoneDetailsEntity {
   id: number;
 
   @Column()
-  functionality: string;
+  camera: string;
 
   @Column()
   RAM: number;

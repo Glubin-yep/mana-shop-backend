@@ -79,8 +79,26 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  async findAll(): Promise<ProductEntity[]> {
+  async findItemsForMainPage(amount: number): Promise<ProductEntity[]> {
+    const categories = Object.values(Category);
+
+    const products: ProductEntity[] = [];
+
+    for (const category of categories) {
+      const categoryProducts = await this.productRepository.find({
+        where: { category },
+        take: amount,
+      });
+
+      products.push(...categoryProducts);
+    }
+
+    return products;
+  }
+
+  async findAllinCategory(category: Category): Promise<ProductEntity[]> {
     return this.productRepository.find({
+      where: { category },
       relations: [
         'laptopDetails',
         'computerDetails',
@@ -93,6 +111,7 @@ export class ProductsService {
       ],
     });
   }
+
   async findOne(id: number): Promise<ProductEntity> {
     return this.productRepository.findOne({
       where: { id },
