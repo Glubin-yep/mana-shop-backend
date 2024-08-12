@@ -39,6 +39,13 @@ export class ProductsController {
     return this.productsService.findItemsForMainPage(amount);
   }
 
+  @Get(':id')
+  async findByID(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ProductEntity> {
+    return this.productsService.findOne(id);
+  }
+
   @Put(':id')
   async update(
     @Param('id') id: number,
