@@ -11,6 +11,10 @@ import { AccessoriesDetailsEntity } from './entities/category-details/accessorie
 import { SmartHomeDetailsEntity } from './entities/category-details/smartHome-details.entity';
 import { TVDetailsEntity } from './entities/category-details/TV-details.entity';
 import { KitchenDetailsEntity } from './entities/category-details/kitchen-details.entity';
+import { DeliveryStatusService } from './services/delivery.service';
+import { DeliveryStatusEntity } from './entities/delivery-status/delivery-status.entity';
+import { UsersService } from '@/users/users.service';
+import { UserEntity } from '@/users/entities/user.entity';
 
 @Module({
   imports: [
@@ -24,9 +28,11 @@ import { KitchenDetailsEntity } from './entities/category-details/kitchen-detail
       SmartHomeDetailsEntity,
       TVDetailsEntity,
       KitchenDetailsEntity,
+      DeliveryStatusEntity,
+      UserEntity,
     ]),
   ],
-  providers: [ProductsService],
+  providers: [ProductsService, DeliveryStatusService, UsersService],
   controllers: [ProductsController],
 })
 export class ProductsModule {}

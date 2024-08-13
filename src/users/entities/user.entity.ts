@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { DeliveryStatusEntity } from '../../products/entities/delivery-status/delivery-status.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -15,8 +16,14 @@ export class UserEntity {
   password: string;
 
   @Column({ nullable: true })
-  firstName: string;
+  firstName?: string;
 
   @Column({ nullable: true })
-  lastName: string;
+  lastName?: string;
+
+  @Column({ nullable: true })
+  adress?: string;
+
+  @OneToMany(() => DeliveryStatusEntity, (delivery) => delivery.user)
+  delivery?: DeliveryStatusEntity[];
 }

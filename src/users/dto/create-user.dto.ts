@@ -8,11 +8,11 @@ export class CreateUserDto {
   @ApiProperty({
     default: 'testaccount',
   })
-  firstName: string | null;
+  firstName?: string | null;
   @ApiProperty({
     default: '12345',
   })
-  lastName: string | null;
+  lastName?: string | null;
   @ApiProperty({
     default: '12345',
   })

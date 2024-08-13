@@ -7,12 +7,16 @@ import {
   Put,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Category } from '@/enums/category';
+import { UserId } from '@/decorators/user-id.decorator';
+import { JwtAuthGuard } from '@/auth/guards/jwt.guard';
+import { DeliveryStatusEntity } from './entities/delivery-status/delivery-status.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -57,5 +61,15 @@ export class ProductsController {
   @Delete(':id')
   async remove(@Param('id') id: number): Promise<void> {
     return this.productsService.remove(id);
+  }
+
+  @Get('buy/:productId')
+  @UseGuards(JwtAuthGuard)
+  async buyOneProduct(
+    @UserId() id: number,
+    @Param('productId', ParseIntPipe)
+    productId: number,
+  ): Promise<DeliveryStatusEntity> {
+    return this.productsService.buyOneProduct(productId, id);
   }
 }

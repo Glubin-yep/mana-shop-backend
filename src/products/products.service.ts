@@ -13,10 +13,13 @@ import { KitchenDetailsEntity } from './entities/category-details/kitchen-detail
 import { CreateProductDto } from './dto/create-product.dto';
 import { Category } from '@/enums/category';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { DeliveryStatusService } from './services/delivery.service';
+import { DeliveryStatusEntity } from './entities/delivery-status/delivery-status.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
+    private deliveryStatusService: DeliveryStatusService,
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(LaptopDetailsEntity)
@@ -88,6 +91,16 @@ export class ProductsService {
       const categoryProducts = await this.productRepository.find({
         where: { category },
         take: amount,
+        relations: [
+          'laptopDetails',
+          'computerDetails',
+          'smartphoneDetails',
+          'softwareDetails',
+          'accessoriesDetails',
+          'smartHomeDetails',
+          'tvDetails',
+          'kitchenDetails',
+        ],
       });
 
       products.push(...categoryProducts);
@@ -150,5 +163,30 @@ export class ProductsService {
 
   async remove(id: number): Promise<void> {
     await this.productRepository.delete(id);
+  }
+
+  async buyOneProduct(
+    productId: number,
+    userId: number,
+  ): Promise<DeliveryStatusEntity> {
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+      relations: [
+        'laptopDetails',
+        'computerDetails',
+        'smartphoneDetails',
+        'softwareDetails',
+        'accessoriesDetails',
+        'smartHomeDetails',
+        'tvDetails',
+        'kitchenDetails',
+      ],
+    });
+
+    const deliveryStatus = this.deliveryStatusService.addToTrack(
+      product,
+      userId,
+    );
+    return deliveryStatus;
   }
 }

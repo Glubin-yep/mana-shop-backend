@@ -4,6 +4,7 @@ import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserInfoDTO } from './dto/user-info.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,9 +19,11 @@ export class UsersService {
     });
   }
 
-  async findById(id: number) {
-    return this.userRepository.findOneBy({
-      id,
+  async findById(id: number): Promise<UserEntity> {
+    id = 3;
+    return this.userRepository.findOne({
+      where: { id },
+      relations: ['delivery'],
     });
   }
 
@@ -40,5 +43,25 @@ export class UsersService {
     await this.userRepository.save(user);
 
     return user;
+  }
+
+  async getUserInfo(id: number) {
+    const userInfo = await this.findById(id);
+
+    const userDto: UserInfoDTO = {
+      id: userInfo.id,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      adress: userInfo.adress,
+      delivery: userInfo.delivery.map((delivery) => ({
+        id: delivery.id,
+        trackCode: delivery.trackCode,
+        status: delivery.status,
+        createdOn: delivery.createdOn,
+      })),
+    };
+
+    return userDto;
   }
 }

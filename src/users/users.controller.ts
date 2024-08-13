@@ -16,11 +16,11 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  // @Get('/statistic')
-  // @UseGuards(JwtAuthGuard)
-  // getStatistic(@UserId() id: number) {
-  //   return this.usersService.getUserStatistics(id);
-  // }
+  @Get('/info')
+  @UseGuards(JwtAuthGuard)
+  getStatistic(@UserId() id: number) {
+    return this.usersService.getUserInfo(id);
+  }
 
   // @Get('/storage')
   // @UseGuards(JwtAuthGuard)

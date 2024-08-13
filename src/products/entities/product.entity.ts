@@ -4,6 +4,7 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { LaptopDetailsEntity } from './category-details/laptop-details.entity';
 import { ComputerDetailsEntity } from './category-details/computer-details.entity';
@@ -14,6 +15,7 @@ import { SmartHomeDetailsEntity } from './category-details/smartHome-details.ent
 import { TVDetailsEntity } from './category-details/TV-details.entity';
 import { KitchenDetailsEntity } from './category-details/kitchen-details.entity';
 import { Category } from '@/enums/category';
+import { DeliveryStatusEntity } from './delivery-status/delivery-status.entity';
 
 @Entity('products')
 export class ProductEntity {
@@ -104,4 +106,10 @@ export class ProductEntity {
   })
   @JoinColumn()
   kitchenDetails: KitchenDetailsEntity;
+
+  @OneToMany(
+    () => DeliveryStatusEntity,
+    (deliveryStatus) => deliveryStatus.product,
+  )
+  deliveryStatuses: DeliveryStatusEntity[];
 }
