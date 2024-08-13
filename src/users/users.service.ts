@@ -23,7 +23,7 @@ export class UsersService {
     id = 3;
     return this.userRepository.findOne({
       where: { id },
-      relations: ['delivery'],
+      relations: ['delivery', 'delivery.product'],
     });
   }
 
@@ -47,7 +47,6 @@ export class UsersService {
 
   async getUserInfo(id: number) {
     const userInfo = await this.findById(id);
-
     return new UserInfoDTO(userInfo);
   }
 }

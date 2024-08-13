@@ -3,4 +3,5 @@ export class DeliveryStatusDTO {
   trackCode: string;
   status: string;
   createdOn: Date;
+  productId: number;
 }

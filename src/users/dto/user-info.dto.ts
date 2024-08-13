@@ -20,6 +20,7 @@ export class UserInfoDTO {
       trackCode: delivery.trackCode,
       status: delivery.status,
       createdOn: delivery.createdOn,
+      productId: delivery.product.id,
     }));
   }
 }
