@@ -27,9 +27,9 @@ export class AuthController {
     const token = await this.authService.login(req.user as UserEntity, req);
 
     res.cookie('Authorization', token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: 60 * 60 * 60 * 360,
     });
 
@@ -45,9 +45,9 @@ export class AuthController {
   @Get('logout')
   async logout(@Res() res) {
     res.cookie('Authorization', {
-      httpOnly: false,
+      httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       expires: new Date(0),
     });
     res.status(200).end();
