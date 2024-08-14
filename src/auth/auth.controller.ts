@@ -28,7 +28,7 @@ export class AuthController {
 
     res.cookie('Authorization', token, {
       httpOnly: false,
-      secure: false,
+      secure: true,
       sameSite: 'lax',
       maxAge: 60 * 60 * 60 * 360,
     });
@@ -46,7 +46,7 @@ export class AuthController {
   async logout(@Res() res) {
     res.cookie('Authorization', {
       httpOnly: false,
-      secure: false,
+      secure: true,
       sameSite: 'lax',
       expires: new Date(0),
     });
