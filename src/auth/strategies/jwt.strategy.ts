@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, Req, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -14,11 +14,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.SECRET_KEY,
     });
   }
-  private static extractJWTFromCookie(@Req() req): string | null {
-    if (req.cookies['Authorization'] && req.cookies['Authorization'].token) {
-      return req.cookies['Authorization'].token;
-    }
-    return null;
+
+  private static extractJWTFromCookie(req: any): string | null {
+    return req.cookies?.['Authorization'] || null;
   }
 
   async validate(payload: any) {
