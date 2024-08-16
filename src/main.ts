@@ -5,10 +5,11 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const corsOrigins = process.env.CORS_ORIGINS?.split(',') || [];
 
   app.enableCors({
     credentials: true,
-    origin: ['http://localhost:5173', 'https://sotaternopil.netlify.app'],
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     exposedHeaders: ['Content-Disposition'],
   });
