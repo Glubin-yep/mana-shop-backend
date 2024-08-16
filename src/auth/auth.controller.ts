@@ -12,8 +12,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.guard';
 import { Response } from 'express';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
-import { UserEntity } from '@/users/entities/user.entity';
-import { UserResponseDto } from '@/users/dto/user-response.dto';
+import { LoginUserDto } from '@/users/dto/login-user.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -22,9 +21,15 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiBody({ type: CreateUserDto })
-  async login(@Request() req, @Res({ passthrough: true }) res: Response) {
-    const token = await this.authService.login(req.user as UserEntity, req);
+  @ApiBody({ type: LoginUserDto })
+  async login(
+    @Body() loginUserDto: LoginUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { token, user } = await this.authService.login(
+      loginUserDto.email,
+      loginUserDto.password,
+    );
 
     res.cookie('Authorization', token, {
       httpOnly: true,
@@ -33,14 +38,25 @@ export class AuthController {
       maxAge: 60 * 60 * 60 * 360,
     });
 
-    // Return the user details as a DTO
-    return new UserResponseDto(req.user as UserEntity);
+    return user;
   }
 
   @Post('register')
   @ApiBody({ type: CreateUserDto })
-  async register(@Body() dto: CreateUserDto) {
-    return this.authService.register(dto);
+  async register(
+    @Body() dto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, token } = await this.authService.register(dto);
+
+    res.cookie('Authorization', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 60 * 60 * 360,
+    });
+
+    return user;
   }
 
   @Get('logout')
@@ -57,7 +73,11 @@ export class AuthController {
   @Get('validate')
   async validate(@Request() req) {
     const cookie = req.cookies['Authorization'];
-    console.log(cookie);
-    return this.authService.validateToken(cookie);
+    if (!cookie) {
+      return { valid: false, message: 'No token provided' };
+    }
+
+    const isValid = await this.authService.validateToken(cookie);
+    return { valid: isValid };
   }
 }

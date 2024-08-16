@@ -5,11 +5,8 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UserResponseDto } from '@/users/dto/user-response.dto';
-import { UserEntity } from '@/users/entities/user.entity';
 import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { PasswordService } from './services/password.service';
 
 @Injectable()
@@ -22,7 +19,8 @@ export class AuthService {
 
   async validateToken(token: string): Promise<any> {
     try {
-      return await this.jwtService.verifyAsync(token);
+      const decoded = await this.jwtService.verifyAsync(token);
+      return { valid: true, decoded };
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
     }
@@ -49,17 +47,24 @@ export class AuthService {
     }
 
     const user = await this.userService.create(dto);
+    const token = this.jwtService.sign({ id: user.id });
 
     return {
-      token: this.jwtService.sign({ id: user.id }),
-      ...new UserResponseDto(user),
+      token,
+      user: new UserResponseDto(user),
     };
   }
 
-  async login(user: UserEntity, req: Request) {
+  async login(email: string, password: string) {
+    const user = await this.validateUser(email, password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const token = this.jwtService.sign({ id: user.id });
     return {
-      token: this.jwtService.sign({ id: user.id }),
-      ...new UserResponseDto(user),
+      token,
+      user: user,
     };
   }
 
@@ -69,6 +74,7 @@ export class AuthService {
     };
   }
 
+  // Example GitHub OAuth login logic (commented out for now)
   // async Githublogin(req: Request, gitUser: any) {
   //   const existingUser = await this.userService.findByOAuthGithubId(gitUser.id);
   //   if (!existingUser) {
@@ -83,13 +89,13 @@ export class AuthService {
 
   //     return {
   //       token: this.jwtService.sign({ id: user.id }),
-  //       ...new UserResponseDto(user),
+  //       user: new UserResponseDto(user),
   //     };
   //   }
 
   //   return {
   //     token: this.jwtService.sign({ id: existingUser.id }),
-  //     ...new UserResponseDto(gitUser),
+  //     user: new UserResponseDto(existingUser),
   //   };
   // }
 }
