@@ -13,7 +13,7 @@ import { LocalAuthGuard } from './guards/local.guard';
 import { Response } from 'express';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UserEntity } from '@/users/entities/user.entity';
-import { AuthGuard } from '@nestjs/passport';
+import { UserResponseDto } from '@/users/dto/user-response.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -33,18 +33,19 @@ export class AuthController {
       maxAge: 60 * 60 * 60 * 360,
     });
 
-    // Send a response without using res.send()
-    res.status(200).end();
+    // Return the user details as a DTO
+    return new UserResponseDto(req.user as UserEntity);
   }
 
   @Post('register')
+  @ApiBody({ type: CreateUserDto })
   async register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
 
   @Get('logout')
-  async logout(@Res() res) {
-    res.cookie('Authorization', {
+  async logout(@Res() res: Response) {
+    res.cookie('Authorization', '', {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
@@ -54,36 +55,9 @@ export class AuthController {
   }
 
   @Get('validate')
-  async Validate(@Request() req) {
-    const cookie = req.cookies['Authorization']; // Access cookies with 'cookies' (plural)
+  async validate(@Request() req) {
+    const cookie = req.cookies['Authorization'];
     console.log(cookie);
-    return this.authService.validateToken(cookie.token);
+    return this.authService.validateToken(cookie);
   }
-
-  // @Get('github')
-  // @UseGuards(AuthGuard('github'))
-  // // eslint-disable-next-line @typescript-eslint/no-empty-function
-  // githubLogin() {}
-
-  // @Get('github/callback')
-  // @UseGuards(AuthGuard('github'))
-  // async githubLoginCallback(@Request() req, @Res() res) {
-  //   try {
-  //     const user = req.user;
-  //     const token = await this.authService.Githublogin(req, user);
-  //     res.cookie('Authorization', token, {
-  //       httpOnly: false,
-  //       secure: false,
-  //       sameSite: 'lax',
-  //       maxAge: 60 * 60 * 60 * 360,
-  //     });
-
-  //     res.redirect(process.env.FRONTEND_URL);
-
-  //     return;
-  //   } catch (error) {
-  //     console.error('GitHub login callback error:', error);
-  //     return res.status(500).send('Internal Server Error');
-  //   }
-  // }
 }
